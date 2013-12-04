@@ -317,13 +317,31 @@ class carddav_common
 	// admin settings from config.inc.php
 	public static function get_adminsettings()
 	{{{
+            
 	if(is_array(self::$admin_settings))
 		return self::$admin_settings;
 
 	$rcmail = rcmail::get_instance();
 	$prefs = array();
-	if (file_exists("config.inc.php"))
-		require("config.inc.php");
+
+
+	/*
+	 * We fixed config file path, previously set to "config.inc.php", 
+	 * because file paths are relative to RC instance dir, and not to plugin dir.
+	 * Maybe could be more reliable use RC framework to import single plugin preferences, as in:
+	 *
+	 * // $this->load_config("<optional_filepath_relative_to_plugin_maindir>");
+	 * 
+	 * from plugin class methods, and accessing values with 
+	 *
+	 * // rcmail::get_instance()->config->get('<option_name>', '<default_value>');
+	 * 
+	 * Maybe there is reason for include source file via require() rather than use load_config(),
+	 * probably RC-style config files are not suitable for storings structured data,  well suited in arrays. 
+	 */
+	if (file_exists("plugins/carddav/config.inc.php"))
+                require("plugins/carddav/config.inc.php");
+                
 	self::$admin_settings = $prefs;
 
 	if(is_array($prefs['_GLOBAL'])) {
