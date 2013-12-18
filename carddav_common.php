@@ -322,8 +322,8 @@ class carddav_common
 
 	$rcmail = rcmail::get_instance();
 	$prefs = array();
-	if (file_exists("config.inc.php"))
-		require("config.inc.php");
+	if (file_exists("plugins/carddav/config.inc.php"))
+		require("plugins/carddav/config.inc.php");
 	self::$admin_settings = $prefs;
 
 	if(is_array($prefs['_GLOBAL'])) {

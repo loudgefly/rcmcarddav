@@ -1171,6 +1171,26 @@ EOF
 	}
 	return false;
 	}}}
+        
+        
+        /**
+	 * Deletes all contacts related to the addressbook
+	 *
+	 */
+        function delete_all() {
+            $dbh = rcmail::get_instance()->db;
+            $ids_query = sprintf('SELECT id FROM %s WHERE abook_id=%s', 
+                                get_table_name('carddav_contacts'),
+                                $this->id);
+                        
+            $query_result = $dbh->query($ids_query);
+            $ids = array();
+            while ($row = $dbh->fetch_assoc($query_result)) {
+            	$ids[] = $row['id'];
+            }
+            
+            $this->delete($ids);
+        }        
 
 	private function guid()
 	{{{
