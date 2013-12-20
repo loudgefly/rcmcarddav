@@ -1022,10 +1022,11 @@ EOF
 
 	if (!empty($where)) {
 		$this->set_search_set($where);
-		if ($select)
+		if ($select){
 			$this->list_records(null, 0, $nocount);
-		else
-			$this->result = $this->count();
+                }else{
+                        $this->result = new rcube_result_set($this->_count());
+                }
 	}
 
 	return $this->result;
@@ -1047,20 +1048,16 @@ EOF
 	// Determines and returns the number of cards matching the current search criteria
 	private function _count($cols=array())
 	{{{
-	if($this->total_cards < 0) {
-		$dbh = rcmail::get_instance()->db;
-
-		$sql_result = $dbh->query('SELECT COUNT(id) as total_cards FROM ' .
-			get_table_name('carddav_contacts') .
-			' WHERE abook_id=?' .
-			($this->filter ? " AND (".$this->filter.")" : ""),
-			$this->id
-		);
-
-		$resultrow = $dbh->fetch_assoc($sql_result);
-		$this->total_cards = $resultrow['total_cards'];
-	}
-	return $this->total_cards;
+            $dbh = rcmail::get_instance()->db;
+            $count_query = sprintf('SELECT COUNT(id) as total_cards FROM %s WHERE abook_id=%s %s',
+                                    get_table_name('carddav_contacts'), 
+                                    $this->id,
+                                    ($this->filter ? "AND (".$this->filter.")" : ""));
+            $sql_result = $dbh->query($count_query);
+            $resultrow = $dbh->fetch_assoc($sql_result);
+            $this->total_cards = $resultrow['total_cards'];
+            
+            return $this->total_cards;
 	}}}
 
 	private function determine_filter_params($cols, $subset, &$firstrow, &$numrows, &$read_vcard) {
